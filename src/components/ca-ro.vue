@@ -66,7 +66,7 @@
                             <Icon type="ios-paper" />
                             证书模版定制
                         </template>
-                        <MenuItem name="humanCertificateTemplate"  @click.native="modal1 = true" >
+                        <MenuItem name="humanCertificateTemplate"  @click.native="ctm = true" >
                         <Icon type="ios-people" />
                         人员证书模版
                         </MenuItem>
@@ -102,13 +102,49 @@
         </Drawer>
     </Layout>
     <Modal
-        v-model="modal1"
-        title="Common Modal dialog box title"
+        v-model="ctm"
+        title="证书模版所有项"
+        :mask-closable="false"
         @on-ok="ok"
         @on-cancel="cancel">
-        <p>Content of dialog</p>
-        <p>Content of dialog</p>
-        <p>Content of dialog</p>
+        <p>证书模版基本信息项&nbsp&nbsp&nbsp<Button size="small" icon="ios-add" @click="ctt.ctbam = true"
+        title="证书模版所有项"
+        :mask-closable="false"
+        @on-ok="ok"
+        @on-cancel="cancel"></Button></p>
+        <br/>
+        <Table stripe :columns="ctt.allItems.base.columns" :data="ctt.allItems.base.data"></Table>
+        <br/>
+        <p>密钥用法</p>
+        <br/>
+        <Table stripe :columns="ctt.allItems.kus.columns" :data="ctt.allItems.kus.data"></Table>
+        <br/>
+        <p>证书策略</p>
+        <br/>
+        <Table stripe :columns="ctt.allItems.cs.columns" :data="ctt.allItems.cs.data"></Table>
+        <br/>  
+        <p>主题备用名&nbsp&nbsp&nbsp<Button size="small" icon="ios-add"></Button></p>
+        <br/>
+        <Table stripe :columns="ctt.allItems.tbn.columns" :data="ctt.allItems.tbn.data"></Table>
+        <br/>  
+        <p>拓展密钥用法&nbsp&nbsp&nbsp<Button size="small" icon="ios-add"></Button></p>
+        <br/>
+        <Table stripe :columns="ctt.allItems.eku.columns" :data="ctt.allItems.eku.data"></Table>
+        <br/>
+        <p>预留拓展项&nbsp&nbsp&nbsp<Button size="small" icon="ios-add"></Button></p>
+        <br/>
+        <Table stripe :columns="ctt.allItems.eku.columns" :data="ctt.allItems.eku.data"></Table>
+        <br/>                               
+    </Modal>
+    <Modal
+        draggable scrollable
+        :mask-closable="false"
+        v-model="ctt.ctbam"
+        title="证书模版基本信息项添加"
+        @on-ok="ok"
+        @on-cancel="cancel"
+        z-index=1001>
+        <div>This is the second modal</div>
     </Modal>
 </div>
 </template>
@@ -121,7 +157,174 @@
                 count: 2,
                 openTheme: false,
                 isCollapsed: false,
-                modal1: false
+                ctm: false,
+                ctt: {
+                    allItems:{
+                        base: {
+                            columns: [
+                                {
+                                    title: '模版信息项名称',
+                                    key: 'name'
+                                },
+                                {
+                                    title: '模版信息项标识',
+                                    key: 'id'
+                                },
+                                {
+                                    title: 'OID',
+                                    key: 'oid'
+                                }
+                            ],
+                            data: 
+                            [
+                                {
+                                    name: '国名',
+                                    id: 'CountryName',
+                                    oid: '2.4.5.6',
+                                },
+                                {
+                                    name: '组织名',
+                                    id: 'organizationName',
+                                    oid: '2.5.4.10',
+                                },
+                                {
+                                    name: '单位名',
+                                    id: 'organizationUnitName',
+                                    oid: '2.5.4.11',
+                                },
+                                {
+                                    name: '普通姓名',
+                                    id: 'commonName',
+                                    oid: '2.5.4.3',
+                                },
+                                {
+                                    name: '证件号',
+                                    id: 'SubjectID',
+                                    oid: '2',
+                                }
+                            ]
+                        },
+                        kus: {
+                            columns:[
+                            {
+                                title: '模版信息项名称',
+                                key: 'name'
+                            },
+                            {
+                                title: 'OID',
+                                key: 'oid'
+                            },   
+                            {
+                                title: '修改',
+                                key: 'edit',
+                                width: 80,
+                                align: 'center',
+                                render: (h, params) => {
+                                    return h('div', [
+                                        h('Button', {
+                                            props: {
+                                                type: 'error',
+                                                size: 'small'
+                                            },
+                                            on: {
+                                                click: () => {
+                                                    // this.remove(params.index)
+                                                    this.info()
+                                                }
+                                            }
+                                        }, '修改')
+                                    ]);
+                                }
+                            }                 
+                            ],
+                            data:[
+                            {
+                                name: '签名证书',
+                                oid: 'C0'
+                            },
+                            {
+                                name: '加密证书',
+                                oid: '10'
+                            }
+                            ]
+                        },
+                        cs: {
+                            columns: [
+                                {
+                                    title: '模版信息项名称',
+                                    key: 'name'
+                                },
+                                {
+                                    title: 'OID',
+                                    key: 'oid'
+                                },   
+                            ],
+                            data: [
+                                {
+                                    name: 'CPS',
+                                    oid: '0'
+                                },
+                                {
+                                    name: 'User Notice',
+                                    oid: '1'
+                                }
+                            ]
+                        },
+                        tbn: {
+                            columns: [
+                                {
+                                    title: '模版信息项名称',
+                                    key: 'name'
+                                },
+                                {
+                                    title: 'OID',
+                                    key: 'oid'
+                                },   
+                            ],
+                            data: [
+                                {
+                                    name: '登录名',
+                                    oid: '2'
+                                }
+                            ]
+                        },
+                        eku: {
+                            columns: [
+                                {
+                                    title: '模版信息项名称',
+                                    key: 'name'
+                                },
+                                {
+                                    title: 'OID',
+                                    key: 'oid'
+                                },   
+                            ],
+                            data: [
+                                {
+                                    name: '服务端验证',
+                                    oid: '1.3.6.1.5.5.7.3.1'
+                                },
+                                {
+                                    name: '客户端验证',
+                                    oid: '1.3.6.1.5.5.7.3.2'
+                                }
+                            ]
+                        },
+                        oxi: {
+                            columns: [
+                                {
+                                    title: '模版信息项名称',
+                                    key: 'name'
+                                },
+                                {
+                                    title: 'OID',
+                                    key: 'oid'
+                                },   
+                            ]
+                        },                                       
+                    },
+                    ctbam: false
+                },
             };
         },
         created () {
